@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Visualizations</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chart {
+            width: 800px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        .sketch {
+            display: block;
+            margin: 20px auto;
+        }
+        #tooltip {
+            position: absolute;
+            text-align: center;
+            width: auto;
+            height: auto;
+            padding: 5px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Data Visualizations</h1>
+    <div id="steamGraph" class="chart"></div>
+    <div id="transitionGraph" class="chart"></div>
+    <div class="button-container">
+        <button id="playButton">Play</button>
+    </div>
+    <div id="p5Sketch" class="sketch"></div>
+    <div id="tooltip"></div>
+
+    <script src="steamGraph.js"></script>
+    <script src="transitionGraph.js"></script>
+    <script src="p5Sketch.js"></script>
+
+    <script>
+        document.getElementById("playButton").addEventListener("click", () => {
+            playAnimation();
+        });
+    </script>
+</body>
+</html>

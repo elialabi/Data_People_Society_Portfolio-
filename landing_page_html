@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects Landing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding-top: 50px;
+        }
+        .project {
+            margin: 20px;
+        }
+        .project a {
+            display: inline-block;
+            padding: 20px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .project a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Projects</h1>
+    <div class="project">
+        <a href="got_dps/index.html">Game of Thrones Project</a>
+    </div>
+    <div class="project">
+        <a href="beats_dps/beats_index.html">Music Project</a>
+    </div>
+    <div class="project">
+        <a href="airquality_dps/public/index.html">Air Quality Project</a>
+    </div>
+</body>
+</html>

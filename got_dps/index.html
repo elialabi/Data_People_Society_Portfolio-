@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game of Thrones Character SE1 E1 Interactions</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-image: url('photo-1468657988500-aca2be09f4c6.avif');
+            background-size: cover;
+            background-position: center;
+            color: #f8f8f8;
+        }
+        svg {
+            width: 100%;
+            height: 90%;
+        }
+        .links line {
+            stroke: #bbb;
+            stroke-opacity: 0.6;
+        }
+        .nodes circle {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        text {
+            font-size: 12px;
+            pointer-events: none;
+            fill: #d8d8d8;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 160px;
+            height: auto;
+            padding: 8px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .legend {
+            font-size: 12px;
+            color: #fff;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #202020;
+            color: #ffffff;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e4bb24; /* Gold color */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Game of Thrones Character SE1 E1 Interactions</h1>
+</header>
+<div id="tooltip" class="tooltip"></div>
+<script>
+    Promise.all([
+        d3.json('data.json'),
+        d3.json('facts.json')
+    ]).then(function([data, facts]) {
+        data.nodes.forEach(node => {
+            node.fact = facts[node.id]; // Add facts to nodes
+        });
+        renderGraph(data); // Function to render your graph
+    });
+
+    function renderGraph(data) {
+        const width = document.body.clientWidth, height = window.innerHeight * 0.9;
+        const svg = d3.select("body").append("svg")
+            .attr("viewBox", [0, 0, width, height])
+            .call(d3.zoom().on("zoom", (event) => {
+                container.attr("transform", event.transform);
+            }))
+            .append("g");
+        const container = svg.append("g");
+        const color = d3.scaleOrdinal(d3.schemeTableau10);
+        const tooltip = d3.select("#tooltip");
+
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+
+        const link = container.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(data.links)
+            .join("line")
+            .style("stroke-width", d => Math.sqrt(d.value));
+
+        const node = container.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(data.nodes)
+            .join("circle")
+            .attr("r", 5)
+            .style("fill", (d, i) => color(i))
+            .on("mouseover", (event, d) => {
+                tooltip.transition()
+                  .duration(200)
+                  .style("opacity", .9);
+                tooltip.html("Name: " + d.id + "<br/>Fact: " + d.fact)
+                  .style("left", (event.pageX + 5) + "px")
+                  .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", (event, d) => {
+                tooltip.transition()
+                  .duration(500)
+                  .style("opacity", 0);
+            })
+            .call(drag(simulation));
+
+        const labels = container.append("g")
+            .attr("class", "labels")
+            .selectAll("text")
+            .data(data.nodes)
+            .join("text")
+            .attr("x", d => d.x + 10)
+            .attr("y", d => d.y + 3)
+            .text(d => d.id);
+
+        simulation.on("tick", () => {
+            link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            node.attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+            labels.attr("x", d => d.x + 10)
+                .attr("y", d => d.y + 3);
+        });
+
+        function drag(simulation) {
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+            return d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended);
+        }
+    }
+</script>
+</body>
+</html>
